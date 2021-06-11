@@ -1,16 +1,20 @@
-import rooms
+import os
 import random
-import random_rooms_generator as r
-import a2c as a
+
 import matplotlib.pyplot as plot
 import numpy
-import os
+
+# import kmeans_clustering as clustering
+import a2c as a
+import random_rooms_generator as r
+import rooms
 
 """
  Simulates a trial of an agent within an environment.
 """
 
 NUMBER_OF_CLUSTER_REPRESENTITIVES = 10
+
 
 def episode(environment, agent, gamma):
     state = environment.reset()
@@ -44,12 +48,14 @@ def sync_model(global_model, local_models):
 def pick_n_per_cluster(path, number):
     paths = []
     n_paths_per_cluster = []
-    layout_paths = os.listdir('kmeans_clusteredLayouts')
+    # layout_paths = os.listdir('kmeans_clusteredLayouts')
+    layout_paths = os.listdir('kmeans_clusteredLayouts_count_of_obstacles')
     layout_paths.sort()
     current_cluster = 0
     rooms_of_current_cluster = []
     for layout_path in layout_paths:
-        current_file = "kmeans_clusteredLayouts/" + layout_path
+        # current_file = "kmeans_clusteredLayouts/" + layout_path
+        current_file = "kmeans_clusteredLayouts_count_of_obstacles/" + layout_path
         if str(current_cluster) < layout_path[:1]:
             current_cluster += 1
             paths.append(rooms_of_current_cluster)
@@ -59,6 +65,7 @@ def pick_n_per_cluster(path, number):
             paths.append(rooms_of_current_cluster)
     for layout_path in paths:
         n_paths_per_cluster.append(layout_path[random.randint(0, len(layout_path) - 1)])
+    print(n_paths_per_cluster)
     return n_paths_per_cluster
 
 
@@ -71,14 +78,16 @@ def pick_n_rooms(path, number):
     return picked_rooms
 
 
-# r.random_rooms_generator(100)
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+r.random_rooms_generator(100)
+# clustering.
 params = {}
 
 # Domain setup for unclustered rooms
-layout_paths = pick_n_rooms('layouts', NUMBER_OF_CLUSTER_REPRESENTITIVES)
+# layout_paths = pick_n_rooms('layouts', NUMBER_OF_CLUSTER_REPRESENTITIVES)
 
 # Domain setup for kmeans clustered rooms
-#layout_paths = pick_n_per_cluster("", NUMBER_OF_CLUSTER_REPRESENTITIVES)
+layout_paths = pick_n_per_cluster("", NUMBER_OF_CLUSTER_REPRESENTITIVES)
 
 environments = [rooms.load_env(layout_path) for layout_path in layout_paths]
 nr_environments = len(environments)
@@ -90,7 +99,7 @@ params["nr_input_features"] = numpy.prod(environments[0].observation_space.shape
 params["gamma"] = 0.99
 # batch size
 params["alpha"] = 0.001
-training_epochs = 100
+training_epochs = 10
 averaging_period = 10
 
 # Agent setups
@@ -110,11 +119,11 @@ for epoch in range(training_epochs):
     global_model = global_model.average_policies(agents)
     sync_model(global_model, agents)
 
-#sns.set(style='whitegrid')
-
+# sns.set(style='whitegrid')
+plot.ylim(-0.1, 1.1)
 x = range(training_epochs)
 for i, local_returns, in enumerate(returns):
-    plot.plot(x,local_returns, label="agent {}".format(i))
+    plot.plot(x, local_returns, label="agent {}".format(i))
 plot.title("Progress")
 plot.xlabel("episode")
 plot.ylabel("undiscounted return")

@@ -17,8 +17,8 @@ GOAL_CHANNEL = 1
 OBSTACLE_CHANNEL = 2
 NR_CHANNELS = len([AGENT_CHANNEL,GOAL_CHANNEL,OBSTACLE_CHANNEL])
 
-max_room_width = 9
-max_room_height = 9
+max_room_width = 15
+max_room_height = 15
 
 class RoomsEnv(gym.Env):
 
@@ -49,7 +49,7 @@ class RoomsEnv(gym.Env):
     def state(self):
         state = numpy.zeros((NR_CHANNELS,self.width,self.height))
         x_agent,y_agent = self.agent_position
-        state[AGENT_CHANNEL][x_agent][y_agent] = 1
+        state[AGENT_CHANNEL][x_agent][y_agent] = 1#hallo hello :nerd:
         x_goal, y_goal = self.goal_position
         state[GOAL_CHANNEL][x_goal][y_goal] = 1
         for obstacle in self.obstacles:
@@ -142,6 +142,18 @@ def map_to_flattened_matrix(path):
             else:
                 flattened_matrix.append(0)
     return flattened_matrix
+
+def count_of_obstacles(path):
+    file = pathlib.Path(path)
+    assert file.is_file()
+    with open(path) as f:
+        content = f.readlines()
+    count_of_obstacles = -32
+    for y, line in enumerate(content):
+        for x, cell in enumerate(line.strip().split()):
+            if cell == '#':
+                count_of_obstacles += 1
+    return [count_of_obstacles]
 
 
 def load_env(path, time_limit=100, stochastic=False):

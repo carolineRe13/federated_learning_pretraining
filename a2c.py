@@ -1,4 +1,3 @@
-import random
 import numpy
 import torch
 import torch.nn as nn
@@ -161,7 +160,7 @@ class A2CLearner:
                 discounted_returns.append(R)
             discounted_returns.reverse()
             states = states
-            next_states = next_states
+            next_states = next_states  # epische zuweisung sehr effektiv
             rewards = torch.tensor(rewards, device=self.device, dtype=torch.float)
             discounted_returns = torch.tensor(discounted_returns, device=self.device, dtype=torch.float).detach()
             normalized_returns = (discounted_returns - discounted_returns.mean())

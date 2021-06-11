@@ -1,12 +1,13 @@
 import random
+
 import numpy as np
 
-#max_room_width = random.randint(10, 50)
-#max_room_height = random.randint(10, 50)
+# max_room_width = random.randint(10, 50)
+# max_room_height = random.randint(10, 50)
 
 
-max_room_width = 9
-max_room_height = 9
+max_room_width = 15
+max_room_height = 15
 
 
 def random_rooms_generator(number):
@@ -15,8 +16,8 @@ def random_rooms_generator(number):
     # the size of the count of obstacles are random
     while i < number:
         max_obstacles = ((max_room_height - 2) * (max_room_width - 2))
-        obstacle_matrix = [[0 for x in range(max_room_width)] for y in range(max_room_height)]
-        for j in range(random.randint(0, max_obstacles)):
+        obstacle_matrix = [[0 for _ in range(max_room_width)] for _ in range(max_room_height)]
+        for j in range(random.randint(10, max_obstacles)):
             x = random.randint(1, max_room_height - 2)
             y = random.randint(1, max_room_width - 2)
             obstacle_matrix[x][y] = '#'
@@ -28,11 +29,11 @@ def random_rooms_generator(number):
             obstacle_matrix[x][max_room_width - 1] = '#'
         # when the room is solvable then we create a txt file containing it
         if is_room_solvable(obstacle_matrix, max_room_width, max_room_height, i):
-            i = i + 1
+            i += 1
             a = np.array(obstacle_matrix)
             a = np.where(a == '0', '.', a)
             mat = np.matrix(a)
-            with open('layouts/rooms_{}.txt'.format(i), 'w') as f:
+            with open('layouts/rooms_{}.txt'.format(i), 'w+') as f:
                 for line in mat:
                     np.savetxt(f, line, fmt='%s')
 
