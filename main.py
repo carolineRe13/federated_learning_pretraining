@@ -99,7 +99,7 @@ params["nr_input_features"] = numpy.prod(environments[0].observation_space.shape
 params["gamma"] = 0.99
 # batch size
 params["alpha"] = 0.001
-training_epochs = 10
+training_epochs = 100
 averaging_period = 10
 
 # Agent setups
