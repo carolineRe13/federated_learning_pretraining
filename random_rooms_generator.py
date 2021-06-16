@@ -1,3 +1,4 @@
+import pathlib
 import random
 
 import numpy as np
@@ -14,10 +15,12 @@ def random_rooms_generator(number):
     i = -1
     # until a room is solvable for i, we create new rooms
     # the size of the count of obstacles are random
+    pathlib.Path('layouts').mkdir(parents=True, exist_ok=True)
     while i < number:
         max_obstacles = ((max_room_height - 2) * (max_room_width - 2))
+        max_booster = 5
         obstacle_matrix = [[0 for _ in range(max_room_width)] for _ in range(max_room_height)]
-        for j in range(random.randint(10, max_obstacles)):
+        for _ in range(random.randint(10, max_obstacles)):
             x = random.randint(1, max_room_height - 2)
             y = random.randint(1, max_room_width - 2)
             obstacle_matrix[x][y] = '#'
@@ -27,6 +30,10 @@ def random_rooms_generator(number):
         for x in range(max_room_height):
             obstacle_matrix[x][0] = '#'
             obstacle_matrix[x][max_room_width - 1] = '#'
+        for _ in range(random.randint(2, max_booster)):
+            x = random.randint(1, max_room_height - 2)
+            y = random.randint(1, max_room_width - 2)
+            obstacle_matrix[x][y] = 'x'
         # when the room is solvable then we create a txt file containing it
         if is_room_solvable(obstacle_matrix, max_room_width, max_room_height, i):
             i += 1

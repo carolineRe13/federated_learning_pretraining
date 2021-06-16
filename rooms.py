@@ -85,7 +85,9 @@ class RoomsEnv(gym.Env):
             self.set_position_if_no_obstacle((x + 1, y))
         goal_reached = self.agent_position == self.goal_position
         if goal_reached:
-            reward = 1
+            reward += 1
+        if 'x':
+            reward += 0.2
         self.undiscounted_return += reward
         self.done = goal_reached or self.time >= self.time_limit
         return self.state(), reward, self.done, {}
@@ -137,12 +139,14 @@ def map_to_flattened_matrix(path):
     assert file.is_file()
     with open(path) as f:
         content = f.readlines()
-    flattened_matrix = [max_room_width * max_room_height]
-    for y, line in enumerate(content):
-        for x, cell in enumerate(line.strip().split()):
+    flattened_matrix = []
+    for line in content:
+        for cell in line.strip().split():
             if cell == '#':
                 flattened_matrix.append(1)
-            else:
+            elif cell == '.':
+                flattened_matrix.append(2)
+            elif cell == 'x':
                 flattened_matrix.append(0)
     return flattened_matrix
 

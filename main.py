@@ -8,6 +8,8 @@ import numpy
 import a2c as a
 import random_rooms_generator as r
 import rooms
+import kmeans_clustering as clustering
+import datetime
 
 """
  Simulates a trial of an agent within an environment.
@@ -79,8 +81,8 @@ def pick_n_rooms(path, number):
 
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
-r.random_rooms_generator(100)
-# clustering.
+#r.random_rooms_generator(1000)
+#clustering.kMeans_clustering()
 params = {}
 
 # Domain setup for unclustered rooms
@@ -99,7 +101,7 @@ params["nr_input_features"] = numpy.prod(environments[0].observation_space.shape
 params["gamma"] = 0.99
 # batch size
 params["alpha"] = 0.001
-training_epochs = 100
+training_epochs = 1
 averaging_period = 10
 
 # Agent setups
@@ -128,4 +130,4 @@ plot.title("Progress")
 plot.xlabel("episode")
 plot.ylabel("undiscounted return")
 plot.legend()
-plot.show()
+plot.savefig("diagram_{}.png".format(datetime.datetime.now()))
