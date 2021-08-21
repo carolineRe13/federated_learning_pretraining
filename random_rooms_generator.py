@@ -1,3 +1,4 @@
+import os
 import pathlib
 import random
 
@@ -7,12 +8,12 @@ import numpy as np
 # max_room_height = random.randint(10, 50)
 
 
-max_room_width = 15
-max_room_height = 15
+max_room_width = 12
+max_room_height = 12
 
 
 def random_rooms_generator(number):
-    i = -1
+    i = 0
     # until a room is solvable for i, we create new rooms
     # the size of the count of obstacles are random
     pathlib.Path('layouts').mkdir(parents=True, exist_ok=True)
@@ -40,9 +41,17 @@ def random_rooms_generator(number):
             a = np.array(obstacle_matrix)
             a = np.where(a == '0', '.', a)
             mat = np.matrix(a)
-            with open('layouts/rooms_{}.txt'.format(i), 'w+') as f:
+            with open('test_layouts/rooms_{}.txt'.format(i), 'w+') as f:
                 for line in mat:
                     np.savetxt(f, line, fmt='%s')
+
+
+def delete_last_2000_rooms():
+    i = 1
+    while i < 2001:
+        number = 10000-i
+        os.remove("layouts/rooms_{}.txt".format(number))
+        i += 1
 
 
 def is_room_solvable(obstacle_matrix, max_room_width, max_room_height, i, x=None, y=None):
@@ -73,3 +82,6 @@ def is_room_solvable(obstacle_matrix, max_room_width, max_room_height, i, x=None
     # if no if statements returned a value, then by default no solution has been found where (x, y) is in the
     # solution path.
     return False
+
+if __name__ == '__main__':
+    random_rooms_generator(2000)

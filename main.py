@@ -81,15 +81,15 @@ def pick_n_rooms(path, number):
 
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
-#r.random_rooms_generator(1000)
-#clustering.kMeans_clustering()
+# r.random_rooms_generator(10000)
+# clustering.kMeans_clustering()
 params = {}
 
 # Domain setup for unclustered rooms
-# layout_paths = pick_n_rooms('layouts', NUMBER_OF_CLUSTER_REPRESENTITIVES)
+layout_paths = pick_n_rooms('layouts', NUMBER_OF_CLUSTER_REPRESENTITIVES)
 
 # Domain setup for kmeans clustered rooms
-layout_paths = pick_n_per_cluster("", NUMBER_OF_CLUSTER_REPRESENTITIVES)
+# layout_paths = pick_n_per_cluster("", NUMBER_OF_CLUSTER_REPRESENTITIVES)
 
 environments = [rooms.load_env(layout_path) for layout_path in layout_paths]
 nr_environments = len(environments)
@@ -104,8 +104,24 @@ params["alpha"] = 0.001
 training_epochs = 1
 averaging_period = 10
 
+def pretrain_global_model():
+    print('I bims')
+    global_model = a.A2CLearner(params)
+    layout_paths = os.listdir('layouts')
+    environments = [rooms.load_env('layouts/'+layout_path) for layout_path in layout_paths]
+    for epoch in range(5):
+        for environment in environments:
+            epoch_return = episode(environment, global_model, params["gamma"])
+            print(f'Episode {epoch}, reward {epoch_return}')
+
+    return global_model
+    
+
 # Agent setups
+# global_model = pretrain_global_model()
 global_model = a.A2CLearner(params)
+print(global_model is None)
+global_model.load_model('a2c_model.pth')
 agents = [a.A2CLearner(params) for _ in range(nr_environments)]
 # 0. Initially distribute global model to all local devices
 sync_model(global_model, agents)
@@ -130,4 +146,6 @@ plot.title("Progress")
 plot.xlabel("episode")
 plot.ylabel("undiscounted return")
 plot.legend()
-plot.savefig("diagram_{}.png".format(datetime.datetime.now()))
+plot.show()
+# plot.savefig("diagram_{}.png".format(datetime.datetime.now()))
+

@@ -18,8 +18,8 @@ GOAL_CHANNEL = 1
 OBSTACLE_CHANNEL = 2
 NR_CHANNELS = len([AGENT_CHANNEL, GOAL_CHANNEL, OBSTACLE_CHANNEL])
 
-max_room_width = 15
-max_room_height = 15
+max_room_width = 12
+max_room_height = 12
 
 
 class RoomsEnv(gym.Env):
@@ -117,7 +117,7 @@ class RoomsEnv(gym.Env):
 
 def read_map_file(path):
     file = pathlib.Path(path)
-    assert file.is_file()
+    # assert file.is_file()
     with open(path) as f:
         content = f.readlines()
     obstacles = []
@@ -140,14 +140,38 @@ def map_to_flattened_matrix(path):
     with open(path) as f:
         content = f.readlines()
     flattened_matrix = []
-    for line in content:
-        for cell in line.strip().split():
-            if cell == '#':
-                flattened_matrix.append(1)
-            elif cell == '.':
-                flattened_matrix.append(2)
-            elif cell == 'x':
-                flattened_matrix.append(0)
+    for i, line in enumerate(content):
+        for j, cell in enumerate(line.strip().split()):
+            if i != 0 and i < (max_room_height - 1) and j != 0 and j < (max_room_width - 1):
+                if cell == '#':
+                    flattened_matrix.append(0)
+                elif cell == '.':
+                    flattened_matrix.append(1)
+                elif cell == 'x':
+                    flattened_matrix.append(2)
+    return flattened_matrix
+
+def map_to_flattened_one_hot_matrix(path):
+    file = pathlib.Path(path)
+    assert file.is_file()
+    with open(path) as f:
+        content = f.readlines()
+    flattened_matrix = []
+    for i, line in enumerate(content):
+        for j, cell in enumerate(line.strip().split()):
+            if i != 0 and i < (max_room_height - 1) and j != 0 and j < (max_room_width - 1):
+                if cell == '#':
+                    flattened_matrix.append(0)
+                    flattened_matrix.append(0)
+                    flattened_matrix.append(1)
+                elif cell == '.':
+                    flattened_matrix.append(0)
+                    flattened_matrix.append(1)
+                    flattened_matrix.append(0)
+                elif cell == 'x':
+                    flattened_matrix.append(1)
+                    flattened_matrix.append(0)
+                    flattened_matrix.append(0)
     return flattened_matrix
 
 

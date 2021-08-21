@@ -186,3 +186,22 @@ class A2CLearner:
             self.optimizer.step()
             self.transitions.clear()
         return loss
+
+    def save_model(self) -> str:
+        """
+        Saves the current model of the agent to 'ppo_model.pth'.
+
+        :return: The file path where the model has been saved.
+        """
+        model_path = "a2c_model.pth"
+        torch.save(self.policy_net.state_dict(), model_path)
+        return model_path
+
+    def load_model(self, filename: str) -> None:
+        """
+        Loads the specified (pretrained) model.
+
+        :param filename: The file location of the model to be loaded.
+        :return: None.
+        """
+        self.policy_net.load_state_dict(torch.load(filename))
