@@ -5,6 +5,8 @@ import matplotlib.pyplot as plot
 import numpy
 
 # import kmeans_clustering as clustering
+from boto.exception import PleaseRetryException
+
 import a2c as a
 import random_rooms_generator as r
 import rooms
@@ -16,6 +18,7 @@ import datetime
 """
 
 NUMBER_OF_CLUSTER_REPRESENTITIVES = 10
+PRETRAIN = True
 
 
 def episode(environment, agent, gamma):
@@ -104,24 +107,30 @@ params["alpha"] = 0.001
 training_epochs = 1
 averaging_period = 10
 
+
 def pretrain_global_model():
-    print('I bims')
     global_model = a.A2CLearner(params)
-    layout_paths = os.listdir('layouts')
-    environments = [rooms.load_env('layouts/'+layout_path) for layout_path in layout_paths]
+    layout_paths = os.listdir(
+        'layouts')  ## hallloooo halloooo es geht :D ja, update hat geholfen :D ja verbesser dich mal schnell xD xD was jetzt?
+    # da ja eh alles falsch und sinnlos ist was? du meintest ja, dass man immer den gleichen reward bekommt kuken wir es an! :nerd:
+    # aber dieseräume sind einfach nur dumm und was war das grad? ich habe die main gestartet passiert bei dir was? ja, es brauch so lange
+    # und das nur für 1 epoche das is doch grad nur ein raum, wieso printet das nix. es printet nachher wenn es nach 100 jahren fertig ist
+    # uh
+    environments = [rooms.load_env('layouts/' + layout_path) for layout_path in layout_paths]
     for epoch in range(5):
         for environment in environments:
             epoch_return = episode(environment, global_model, params["gamma"])
             print(f'Episode {epoch}, reward {epoch_return}')
 
     return global_model
-    
+
 
 # Agent setups
-# global_model = pretrain_global_model()
-global_model = a.A2CLearner(params)
-print(global_model is None)
-global_model.load_model('a2c_model.pth')
+if PRETRAIN:
+    global_model = pretrain_global_model()
+else:
+    global_model = a.A2CLearner(params)
+    global_model.load_model('a2c_model.pth')
 agents = [a.A2CLearner(params) for _ in range(nr_environments)]
 # 0. Initially distribute global model to all local devices
 sync_model(global_model, agents)
@@ -148,4 +157,3 @@ plot.ylabel("undiscounted return")
 plot.legend()
 plot.show()
 # plot.savefig("diagram_{}.png".format(datetime.datetime.now()))
-
