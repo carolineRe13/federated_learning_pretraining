@@ -5,7 +5,6 @@ import matplotlib.pyplot as plot
 import numpy
 
 # import kmeans_clustering as clustering
-from boto.exception import PleaseRetryException
 
 import a2c as a
 import random_rooms_generator as r
@@ -83,6 +82,14 @@ def pick_n_rooms(path, number):
     return picked_rooms
 
 
+def load_n_rooms(number):
+    picked_rooms = []
+    layout_path = os.listdir('layouts')
+    for i in range(number):
+        picked_rooms.append(rooms.load_env('layouts' + "/" + layout_path[random.randint(0, len(layout_path) - 1)]))
+    print(picked_rooms)
+    return picked_rooms
+
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 # r.random_rooms_generator(10000)
 # clustering.kMeans_clustering()
@@ -111,23 +118,32 @@ averaging_period = 10
 def pretrain_global_model():
     global_model = a.A2CLearner(params)
     layout_paths = os.listdir(
-        'layouts')  ## hallloooo halloooo es geht :D ja, update hat geholfen :D ja verbesser dich mal schnell xD xD was jetzt?
-    # da ja eh alles falsch und sinnlos ist was? du meintest ja, dass man immer den gleichen reward bekommt kuken wir es an! :nerd:
-    # aber dieseräume sind einfach nur dumm und was war das grad? ich habe die main gestartet passiert bei dir was? ja, es brauch so lange
-    # und das nur für 1 epoche das is doch grad nur ein raum, wieso printet das nix. es printet nachher wenn es nach 100 jahren fertig ist
-    # uh
-    environments = [rooms.load_env('layouts/' + layout_path) for layout_path in layout_paths]
+        'layouts')
+    # environments = [rooms.load_env('layouts/' + layout_path) for layout_path in layout_paths]
+    environments = load_n_rooms(10)
+    returns = []
     for epoch in range(5):
+        room_returns = []
         for environment in environments:
-            epoch_return = episode(environment, global_model, params["gamma"])
-            print(f'Episode {epoch}, reward {epoch_return}')
-
+            room_return = episode(environment, global_model, params["gamma"])
+            room_returns.append(room_return)
+            print(f'Episode {epoch}, reward {room_return}')
+        returns.append(numpy.mean(room_returns))
+    # es ist plt nicht plot nein ah du hast den namen geändert :nerd: ich war es nicht xD ich auch nicht :o es war schon so im code, alles gut
+    # ich würde den titel aus allen plots rausmachen dafür is die caption da also in latex. ok
+    plot.plot(returns)
+    plot.ylim(0, 5)
+    plot.xlabel("episode")
+    plot.ylabel("undiscounted return")
+    plot.legend()
+    plot.show()
     return global_model
 
 
 # Agent setups
 if PRETRAIN:
     global_model = pretrain_global_model()
+    global_model.save_model()
 else:
     global_model = a.A2CLearner(params)
     global_model.load_model('a2c_model.pth')

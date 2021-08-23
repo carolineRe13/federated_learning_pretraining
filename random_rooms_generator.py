@@ -31,10 +31,13 @@ def random_rooms_generator(number):
         for x in range(max_room_height):
             obstacle_matrix[x][0] = '#'
             obstacle_matrix[x][max_room_width - 1] = '#'
-        for _ in range(random.randint(2, max_booster)):
+        j = 0
+        while j < 6:
             x = random.randint(1, max_room_height - 2)
             y = random.randint(1, max_room_width - 2)
-            obstacle_matrix[x][y] = 'x'
+            if obstacle_matrix[x][y] != 'x':
+                obstacle_matrix[x][y] = 'x'
+                j += 1
         # when the room is solvable then we create a txt file containing it
         if is_room_solvable(obstacle_matrix, max_room_width, max_room_height, i):
             i += 1

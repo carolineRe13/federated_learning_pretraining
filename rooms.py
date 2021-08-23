@@ -24,7 +24,7 @@ max_room_height = 12
 
 class RoomsEnv(gym.Env):
 
-    def __init__(self, width, height, obstacles, time_limit, stochastic=False):
+    def __init__(self, width, height, obstacles, items, time_limit, stochastic=False):
         self.seed()
         self.action_space = spaces.Discrete(len(ROOMS_ACTIONS))
         self.observation_space = spaces.Box(-numpy.inf, numpy.inf, shape=(NR_CHANNELS, width, height))
@@ -32,6 +32,7 @@ class RoomsEnv(gym.Env):
         self.done = False
         self.goal_position = (width - 2, height - 2)
         self.obstacles = obstacles
+        self.items = items
         self.time_limit = time_limit
         self.time = 0
         self.width = width
@@ -85,9 +86,10 @@ class RoomsEnv(gym.Env):
             self.set_position_if_no_obstacle((x + 1, y))
         goal_reached = self.agent_position == self.goal_position
         if goal_reached:
-            reward += 1
-        if 'x':
+            reward += 4
+        if self.agent_position in self.items:
             reward += 0.2
+            self.items.remove(self.agent_position)
         self.undiscounted_return += reward
         self.done = goal_reached or self.time >= self.time_limit
         return self.state(), reward, self.done, {}
@@ -121,17 +123,20 @@ def read_map_file(path):
     with open(path) as f:
         content = f.readlines()
     obstacles = []
+    items = []
     width = 0
     height = 0
     for y, line in enumerate(content):
         for x, cell in enumerate(line.strip().split()):
             if cell == '#':
                 obstacles.append((x, y))
+            elif cell == 'x':
+                items.append((x,y))
             width = x
         height = y
     width += 1
     height += 1
-    return width, height, obstacles
+    return width, height, obstacles, items
 
 
 def map_to_flattened_matrix(path):
@@ -189,5 +194,5 @@ def count_of_obstacles(path):
 
 
 def load_env(path, time_limit=1000, stochastic=False):
-    width, height, obstacles = read_map_file(path)
-    return RoomsEnv(width, height, obstacles, time_limit, stochastic)
+    width, height, obstacles, items = read_map_file(path)
+    return RoomsEnv(width, height, obstacles, items, time_limit, stochastic)
