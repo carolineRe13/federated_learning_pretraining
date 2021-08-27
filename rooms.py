@@ -16,7 +16,8 @@ ROOMS_ACTIONS = [MOVE_NORTH, MOVE_SOUTH, MOVE_WEST, MOVE_EAST]
 AGENT_CHANNEL = 0
 GOAL_CHANNEL = 1
 OBSTACLE_CHANNEL = 2
-NR_CHANNELS = len([AGENT_CHANNEL, GOAL_CHANNEL, OBSTACLE_CHANNEL])
+ITEM_CHANNEL = 3
+NR_CHANNELS = len([AGENT_CHANNEL, GOAL_CHANNEL, OBSTACLE_CHANNEL, ITEM_CHANNEL])
 
 max_room_width = 12
 max_room_height = 12
@@ -24,7 +25,7 @@ max_room_height = 12
 
 class RoomsEnv(gym.Env):
 
-    def __init__(self, width, height, obstacles, items, time_limit, stochastic=False):
+    def __init__(self, width, height, obstacles, items, time_limit, room_name, stochastic=False):
         self.seed()
         self.action_space = spaces.Discrete(len(ROOMS_ACTIONS))
         self.observation_space = spaces.Box(-numpy.inf, numpy.inf, shape=(NR_CHANNELS, width, height))
@@ -34,6 +35,7 @@ class RoomsEnv(gym.Env):
         self.obstacles = obstacles
         self.items = items
         self.time_limit = time_limit
+        self.room_name = room_name
         self.time = 0
         self.width = width
         self.height = height
@@ -58,6 +60,9 @@ class RoomsEnv(gym.Env):
         for obstacle in self.obstacles:
             x, y = obstacle
             state[OBSTACLE_CHANNEL][x][y] = 1
+        for item in self.items:
+            x, y = item
+            state[ITEM_CHANNEL][x][y] = 1
         return numpy.swapaxes(state, 0, 2)
 
     def seed(self, seed=None):
@@ -195,4 +200,4 @@ def count_of_obstacles(path):
 
 def load_env(path, time_limit=1000, stochastic=False):
     width, height, obstacles, items = read_map_file(path)
-    return RoomsEnv(width, height, obstacles, items, time_limit, stochastic)
+    return RoomsEnv(width, height, obstacles, items, time_limit, path, stochastic)

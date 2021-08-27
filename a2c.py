@@ -108,7 +108,7 @@ class A2CLearner:
     def average_policies(self, local_agents):
         with torch.no_grad():
             for param in self.policy_net.parameters():
-                param.fill_(0.0)
+                self.fill_ = param.fill_(0.0)
             for local_agent in local_agents:
                 for global_param, local_param in \
                         zip(self.policy_net.parameters(), local_agent.policy_net.parameters()):
@@ -187,15 +187,13 @@ class A2CLearner:
             self.transitions.clear()
         return loss
 
-    def save_model(self) -> str:
+    def save_model(self, path: str) -> None:
         """
         Saves the current model of the agent to 'ppo_model.pth'.
 
-        :return: The file path where the model has been saved.
+        :return: None.
         """
-        model_path = "a2c_model.pth"
-        torch.save(self.policy_net.state_dict(), model_path)
-        return model_path
+        torch.save(self.policy_net.state_dict(), path)
 
     def load_model(self, filename: str) -> None:
         """

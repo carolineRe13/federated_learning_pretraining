@@ -238,7 +238,7 @@ class SARSALearner(Agent):
         return self.Q_values
 
     def policy(self, state):
-        return epsilon_greedy(Q_values, action_counts, epsilon=self.epsilon)
+        return epsilon_greedy(self.Q_values, action_counts, epsilon=self.epsilon)
 
     def update(self, state, action, reward, next_state):
         pass
@@ -265,7 +265,7 @@ class QLearner(Agent):
         return self.Q_values
 
     def policy(self, state):
-        return epsilon_greedy(Q_values, action_counts, epsilon=self.epsilon)
+        return epsilon_greedy(self.Q_values, action_counts, epsilon=self.epsilon)
 
     def update(self, state, action, reward, next_state):
         pass

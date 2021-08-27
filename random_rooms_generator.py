@@ -35,7 +35,7 @@ def random_rooms_generator(number):
         while j < 6:
             x = random.randint(1, max_room_height - 2)
             y = random.randint(1, max_room_width - 2)
-            if obstacle_matrix[x][y] != 'x':
+            if obstacle_matrix[x][y] != 'x' and obstacle_matrix[x][y] != '#':
                 obstacle_matrix[x][y] = 'x'
                 j += 1
         # when the room is solvable then we create a txt file containing it
