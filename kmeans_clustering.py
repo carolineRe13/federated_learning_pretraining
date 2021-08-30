@@ -35,7 +35,7 @@ model = VGG16(weights='imagenet', include_top=False)
 # Variables
 imdir = "layouts/"
 targetdir = "kmeans_clusteredLayouts_one_hot/"
-number_clusters = 10
+number_clusters = 18
 
 latent_dim = 8 * 8
 
@@ -59,9 +59,8 @@ class Autoencoder(Model):
         #    layers.Dense(10 * 10, activation='sigmoid')
         # ])
         # hot
-        # 30
         self.decoder = tf.keras.Sequential([
-            layers.Dense(12 * 12, activation='sigmoid')
+            layers.Dense(30 * 10, activation='sigmoid')
         ])
 
     def call(self, x):
@@ -139,7 +138,7 @@ def train_autoencoder(featurelist, latent_dim):
                     validation_split=0.2)
 
     # not hot
-    prabelli = np.array(featurelist[0].reshape(10, 10))
+    # prabelli = np.array(featurelist[0].reshape(10, 10))
     # prabelli2 = np.array(featurelist[1].reshape(10, 10))
 
     # hot
@@ -149,12 +148,12 @@ def train_autoencoder(featurelist, latent_dim):
     # dekkelsmouk = np.array(reshape_hot_arg_max(decoded_imgs[0])).reshape((10, 10))
 
     # not hot
-    encoded_imgs = autoencoder.encoder(x_train).numpy()
-    decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
-    dekkelsmouk = decoded_imgs[0].reshape((10, 10)).astype('float32') * 2.
+    # encoded_imgs = autoencoder.encoder(x_train).numpy()
+    # decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
+    # dekkelsmouk = decoded_imgs[0].reshape((10, 10)).astype('float32') * 2.
     #dekkelsmouk2 = decoded_imgs[1].reshape((10, 10)).astype('float32') * 2.
 
-    # return encoded_imgs
+    return encoded_imgs
     # return history.history['val_loss']
 
     # plt.title('Autoencoder validation loss')
@@ -183,10 +182,11 @@ def train_autoencoder(featurelist, latent_dim):
 
     #print(mean_absolute_error(prabelli, dekkelsmouk))
 
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    sns.heatmap(dekkelsmouk, ax=ax1)
-    sns.heatmap(prabelli, ax=ax2)
-    plt.show()
+    #fig, (ax1, ax2) = plt.subplots(1, 2)
+    # sns.heatmap(prabelli2, cbar=False, xticklabels=False, yticklabels=False)
+    #plt.show()
+    # sns.heatmap(prabelli, cbar=False, xticklabels=False, yticklabels=False)
+    #plt.show()
 
     # fig, (ax1, ax2) = plt.subplots(1, 2)
     # sns.heatmap(dekkelsmouk2, ax=ax1)
@@ -195,7 +195,7 @@ def train_autoencoder(featurelist, latent_dim):
 
     # return history.history['val_loss']
 
-    return encoded_imgs
+    # return encoded_imgs
 
 
 def reshape_hot(room):
@@ -282,6 +282,7 @@ def run_spectral(featurelist, layout_paths):
         print("    Copy: %s / %s" % (i, len(spectral.labels_)), end="\r")
         shutil.copy(layout_paths[i], "spectral_clustered_layouts/" + str(m) + "_" + str(i) + ".txt")
 
+
 def autoencoder_kmeans():
     layout_paths = os.listdir('layouts')
     layout_paths = ["layouts/" + layout_path for layout_path in layout_paths]
@@ -309,7 +310,7 @@ def kMeans_clustering():
     # train_autoencoder(featurelist, latent_dim)
 
     # classic
-    # run_kmeans(train_autoencoder(featurelist, 7 * 7), layout_paths)
+    run_kmeans(train_autoencoder(featurelist, 7 * 7), layout_paths)
 
     # spectral
     # run_spectral(train_autoencoder(featurelist, 7 * 7), layout_paths)
@@ -318,7 +319,7 @@ def kMeans_clustering():
 
     # gap_statistic(train_autoencoder(featurelist, 7 * 7))
 
-    optimalK(train_autoencoder(featurelist, 7 * 7))
+    # optimalK(train_autoencoder(featurelist, 7 * 7))
 
     #calculate_WSS(train_autoencoder(featurelist, 7 * 7),1000)
 
@@ -785,8 +786,8 @@ if __name__ == '__main__':
     layout_paths = ["layouts/" + layout_path for layout_path in layout_paths]
     layout_paths_flattened = [np.array(rooms.map_to_flattened_matrix(layout_path)) for layout_path in
                               layout_paths]
-    train_autoencoder(layout_paths_flattened, 7*7)
-    # kMeans_clustering()
+    # train_autoencoder(layout_paths_flattened, 7*7)
+    kMeans_clustering()
     # latent_dim_comparaison()
     # autoencoder_kmeans()
 
