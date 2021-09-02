@@ -17,7 +17,7 @@ import random_rooms_generator as r
 """
 
 NUMBER_OF_CLUSTER_REPRESENTATIVES = 18
-PRETRAIN = False
+PRETRAIN = True
 PRETRAINING_EPOCHS = 100
 NUM_RANDOM_ROOMS = 50
 
@@ -59,7 +59,7 @@ def pick_n_per_cluster(path, number):
     layout_paths = os.listdir(path)
     # print([i.split('_', 1)[0] for i in layout_paths])
     layout_paths.sort(key = lambda x: int(x.split('_')[0]))
-    #layout_paths = sorted(layout_paths)
+    # layout_paths = sorted(layout_paths)
     current_cluster = 0
     count_per_cluster = []
     rooms_of_current_cluster = []
@@ -78,6 +78,9 @@ def pick_n_per_cluster(path, number):
         if layout_path == layout_paths[-1]:
             paths.append(rooms_of_current_cluster)
     for layout_path in paths:
+        n_paths_per_cluster.append(layout_path[random.randint(0, len(layout_path) - 1)])
+        n_paths_per_cluster.append(layout_path[random.randint(0, len(layout_path) - 1)])
+        n_paths_per_cluster.append(layout_path[random.randint(0, len(layout_path) - 1)])
         n_paths_per_cluster.append(layout_path[random.randint(0, len(layout_path) - 1)])
     print(n_paths_per_cluster)
     return n_paths_per_cluster
@@ -132,11 +135,12 @@ averaging_period = 10
 
 def pretrain_global_model():
     global_model = a.A2CLearner(params)
-    global_model.load_model('a2c_model_clustering.pth')
+    global_model.load_model('a2c_model_clustering4.pth')
     pick_n_rooms('layouts', NUM_RANDOM_ROOMS)
     # environments = load_n_rooms(NUM_RANDOM_ROOMS)
     # environments_path = ['layouts/rooms_5435.txt', 'layouts/rooms_5460.txt', 'layouts/rooms_823.txt', 'layouts/rooms_443.txt', 'layouts/rooms_7951.txt', 'layouts/rooms_2117.txt', 'layouts/rooms_7520.txt', 'layouts/rooms_7223.txt', 'layouts/rooms_7617.txt', 'layouts/rooms_7304.txt', 'layouts/rooms_1832.txt', 'layouts/rooms_6540.txt', 'layouts/rooms_2981.txt', 'layouts/rooms_9422.txt', 'layouts/rooms_9361.txt', 'layouts/rooms_1445.txt', 'layouts/rooms_1606.txt', 'layouts/rooms_8163.txt', 'layouts/rooms_8589.txt', 'layouts/rooms_1608.txt', 'layouts/rooms_1891.txt', 'layouts/rooms_2000.txt', 'layouts/rooms_1757.txt', 'layouts/rooms_8055.txt', 'layouts/rooms_3993.txt', 'layouts/rooms_7899.txt', 'layouts/rooms_2505.txt', 'layouts/rooms_2549.txt', 'layouts/rooms_7068.txt', 'layouts/rooms_4261.txt', 'layouts/rooms_6197.txt', 'layouts/rooms_8908.txt', 'layouts/rooms_5255.txt', 'layouts/rooms_8203.txt', 'layouts/rooms_7302.txt', 'layouts/rooms_8562.txt', 'layouts/rooms_9829.txt', 'layouts/rooms_4229.txt', 'layouts/rooms_5270.txt', 'layouts/rooms_8224.txt', 'layouts/rooms_6545.txt', 'layouts/rooms_1205.txt', 'layouts/rooms_2513.txt', 'layouts/rooms_1329.txt', 'layouts/rooms_1700.txt', 'layouts/rooms_8407.txt', 'layouts/rooms_5484.txt', 'layouts/rooms_5836.txt', 'layouts/rooms_8673.txt', 'layouts/rooms_1439.txt']
-    environments_path = ['kmeans_clusteredLayouts_one_hot/0_186.txt', 'kmeans_clusteredLayouts_one_hot/1_528.txt', 'kmeans_clusteredLayouts_one_hot/2_353.txt', 'kmeans_clusteredLayouts_one_hot/3_677.txt', 'kmeans_clusteredLayouts_one_hot/4_492.txt', 'kmeans_clusteredLayouts_one_hot/5_155.txt', 'kmeans_clusteredLayouts_one_hot/6_97.txt', 'kmeans_clusteredLayouts_one_hot/7_428.txt', 'kmeans_clusteredLayouts_one_hot/8_763.txt', 'kmeans_clusteredLayouts_one_hot/9_532.txt', 'kmeans_clusteredLayouts_one_hot/10_674.txt', 'kmeans_clusteredLayouts_one_hot/11_272.txt', 'kmeans_clusteredLayouts_one_hot/12_744.txt', 'kmeans_clusteredLayouts_one_hot/13_742.txt', 'kmeans_clusteredLayouts_one_hot/14_579.txt', 'kmeans_clusteredLayouts_one_hot/15_299.txt', 'kmeans_clusteredLayouts_one_hot/16_708.txt', 'kmeans_clusteredLayouts_one_hot/17_332.txt']
+    # environments_path = ['kmeans_clusteredLayouts_one_hot/0_186.txt', 'kmeans_clusteredLayouts_one_hot/1_528.txt', 'kmeans_clusteredLayouts_one_hot/2_353.txt', 'kmeans_clusteredLayouts_one_hot/3_677.txt', 'kmeans_clusteredLayouts_one_hot/4_492.txt', 'kmeans_clusteredLayouts_one_hot/5_155.txt', 'kmeans_clusteredLayouts_one_hot/6_97.txt', 'kmeans_clusteredLayouts_one_hot/7_428.txt', 'kmeans_clusteredLayouts_one_hot/8_763.txt', 'kmeans_clusteredLayouts_one_hot/9_532.txt', 'kmeans_clusteredLayouts_one_hot/10_674.txt', 'kmeans_clusteredLayouts_one_hot/11_272.txt', 'kmeans_clusteredLayouts_one_hot/12_744.txt', 'kmeans_clusteredLayouts_one_hot/13_742.txt', 'kmeans_clusteredLayouts_one_hot/14_579.txt', 'kmeans_clusteredLayouts_one_hot/15_299.txt', 'kmeans_clusteredLayouts_one_hot/16_708.txt', 'kmeans_clusteredLayouts_one_hot/17_332.txt']
+    environments_path = ['kmeans_clusteredLayouts_one_hot/0_289.txt', 'kmeans_clusteredLayouts_one_hot/0_666.txt', 'kmeans_clusteredLayouts_one_hot/0_347.txt', 'kmeans_clusteredLayouts_one_hot/0_380.txt', 'kmeans_clusteredLayouts_one_hot/1_528.txt', 'kmeans_clusteredLayouts_one_hot/1_23.txt', 'kmeans_clusteredLayouts_one_hot/1_431.txt', 'kmeans_clusteredLayouts_one_hot/1_697.txt', 'kmeans_clusteredLayouts_one_hot/2_238.txt', 'kmeans_clusteredLayouts_one_hot/2_746.txt', 'kmeans_clusteredLayouts_one_hot/2_117.txt', 'kmeans_clusteredLayouts_one_hot/2_460.txt', 'kmeans_clusteredLayouts_one_hot/3_0.txt', 'kmeans_clusteredLayouts_one_hot/3_655.txt', 'kmeans_clusteredLayouts_one_hot/3_349.txt', 'kmeans_clusteredLayouts_one_hot/3_265.txt', 'kmeans_clusteredLayouts_one_hot/4_502.txt', 'kmeans_clusteredLayouts_one_hot/4_312.txt', 'kmeans_clusteredLayouts_one_hot/4_336.txt', 'kmeans_clusteredLayouts_one_hot/4_317.txt', 'kmeans_clusteredLayouts_one_hot/5_301.txt', 'kmeans_clusteredLayouts_one_hot/5_386.txt', 'kmeans_clusteredLayouts_one_hot/5_88.txt', 'kmeans_clusteredLayouts_one_hot/5_405.txt', 'kmeans_clusteredLayouts_one_hot/6_330.txt', 'kmeans_clusteredLayouts_one_hot/6_497.txt', 'kmeans_clusteredLayouts_one_hot/6_340.txt', 'kmeans_clusteredLayouts_one_hot/6_707.txt', 'kmeans_clusteredLayouts_one_hot/7_68.txt', 'kmeans_clusteredLayouts_one_hot/7_436.txt', 'kmeans_clusteredLayouts_one_hot/7_704.txt', 'kmeans_clusteredLayouts_one_hot/7_139.txt', 'kmeans_clusteredLayouts_one_hot/8_738.txt', 'kmeans_clusteredLayouts_one_hot/8_162.txt', 'kmeans_clusteredLayouts_one_hot/8_797.txt', 'kmeans_clusteredLayouts_one_hot/8_763.txt', 'kmeans_clusteredLayouts_one_hot/9_297.txt', 'kmeans_clusteredLayouts_one_hot/9_297.txt', 'kmeans_clusteredLayouts_one_hot/9_171.txt', 'kmeans_clusteredLayouts_one_hot/9_532.txt', 'kmeans_clusteredLayouts_one_hot/10_550.txt', 'kmeans_clusteredLayouts_one_hot/10_617.txt', 'kmeans_clusteredLayouts_one_hot/10_39.txt', 'kmeans_clusteredLayouts_one_hot/10_455.txt', 'kmeans_clusteredLayouts_one_hot/11_668.txt', 'kmeans_clusteredLayouts_one_hot/11_529.txt', 'kmeans_clusteredLayouts_one_hot/11_481.txt', 'kmeans_clusteredLayouts_one_hot/11_721.txt', 'kmeans_clusteredLayouts_one_hot/12_321.txt', 'kmeans_clusteredLayouts_one_hot/12_780.txt', 'kmeans_clusteredLayouts_one_hot/12_48.txt', 'kmeans_clusteredLayouts_one_hot/12_482.txt', 'kmeans_clusteredLayouts_one_hot/13_552.txt', 'kmeans_clusteredLayouts_one_hot/13_678.txt', 'kmeans_clusteredLayouts_one_hot/13_625.txt', 'kmeans_clusteredLayouts_one_hot/13_126.txt', 'kmeans_clusteredLayouts_one_hot/14_759.txt', 'kmeans_clusteredLayouts_one_hot/14_679.txt', 'kmeans_clusteredLayouts_one_hot/14_263.txt', 'kmeans_clusteredLayouts_one_hot/14_540.txt', 'kmeans_clusteredLayouts_one_hot/15_119.txt', 'kmeans_clusteredLayouts_one_hot/15_752.txt', 'kmeans_clusteredLayouts_one_hot/15_441.txt', 'kmeans_clusteredLayouts_one_hot/15_44.txt', 'kmeans_clusteredLayouts_one_hot/16_670.txt', 'kmeans_clusteredLayouts_one_hot/16_708.txt', 'kmeans_clusteredLayouts_one_hot/17_495.txt', 'kmeans_clusteredLayouts_one_hot/17_478.txt', 'kmeans_clusteredLayouts_one_hot/17_608.txt', 'kmeans_clusteredLayouts_one_hot/17_464.txt']
     environments = [rooms.load_env(layout_path) for layout_path in environments_path]
     returns = []
     from collections import defaultdict
@@ -197,19 +201,20 @@ def pretrain_global_model_clustering():
     return global_model
 
 
-# pick_n_per_cluster('layouts/', NUMBER_OF_CLUSTER_REPRESENTATIVES)
+pick_n_per_cluster('layouts/', 4)
 
 # Agent setups
 if PRETRAIN:
     global_model = pretrain_global_model()
-    global_model.save_model('a2c_model_clustering2.pth')
+    global_model.save_model('a2c_model_clustering4_2.pth')
     # global_model.save_model('a2c_model2.pth')
 else:
     global_model = a.A2CLearner(params)
     global_model.load_model('a2c_model2.pth')
+    # global_model.load_model('a2c_model_clustering2.pth')
 agents = [a.A2CLearner(params) for _ in range(nr_environments)]
 # 0. Initially distribute global model to all local devices
-global_model = a.A2CLearner(params)
+# global_model = a.A2CLearner(params)
 sync_model(global_model, agents)
 returns = [[] for _ in range(nr_environments)]
 average_returns = []
